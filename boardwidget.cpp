@@ -28,14 +28,10 @@ void BoardWidget::initializeGL() {
 }
 
 void BoardWidget::resizeGL(int w, int h) {
-  makeCurrent();
-
   f->glViewport(0, 0, w, h);
 }
 
 void BoardWidget::paintGL() {
-  makeCurrent();
-
   f->glClear(GL_COLOR_BUFFER_BIT);
 
   if (board_) {
@@ -44,48 +40,27 @@ void BoardWidget::paintGL() {
     for (int rowIndex = 0; rowIndex < sideSize; rowIndex++) {
       for (int columnIndex = 0; columnIndex < sideSize; columnIndex++) {
         if(board_->IsCellAlive(rowIndex, columnIndex)) {
-          DrawAliveCell(rowIndex, columnIndex);
-        }
-        else {
-          DrawDeadCell(rowIndex, columnIndex);
+          DrawCell(rowIndex, columnIndex);
         }
       }
     }
   }
 }
 
-void BoardWidget::Draw() {
-  makeCurrent();
-
-  update();
-}
-
-void BoardWidget::DrawDeadCell(int row, int column) {
-  glBegin(GL_TRIANGLES);
-    glColor3f(0.0, 0.0, 0.0);
-
-    DrawCell(row, column);
-  glEnd();
-}
-
-void BoardWidget::DrawAliveCell(int row, int column) {
-  glBegin(GL_TRIANGLES);
-    glColor3f(0.0, 1.0, 0.0);
-
-    DrawCell(row, column);
-  glEnd();
-}
-
 void BoardWidget::DrawCell(int row, int column) {
   GLfloat x = -1.0f + static_cast<float>(column * proportion_);
   GLfloat y = 1.0f - static_cast<float>(row * proportion_);
 
-  glVertex3f(x, y, 0);
-  glVertex3f( x, y - proportion_, 0);
-  glVertex3f( x + proportion_, y - proportion_, 0);
-  glVertex3f( x, y, 0);
-  glVertex3f( x + proportion_, y, 0);
-  glVertex3f( x + proportion_, y - proportion_, 0);
+  glBegin(GL_TRIANGLES);
+    glColor3f(0.0, 1.0, 0.0);
+
+    glVertex3f(x, y, 0);
+    glVertex3f(x, y - proportion_, 0);
+    glVertex3f(x + proportion_, y - proportion_, 0);
+    glVertex3f(x, y, 0);
+    glVertex3f(x + proportion_, y, 0);
+    glVertex3f(x + proportion_, y - proportion_, 0);
+  glEnd();
 }
 
 void BoardWidget::SetProportion(int sideSize) {
@@ -96,4 +71,8 @@ void BoardWidget::CalculateProportion() {
   int sideSize = board_->GetSideSize();
 
   SetProportion(sideSize);
+}
+
+void BoardWidget::Draw() {
+  update();
 }

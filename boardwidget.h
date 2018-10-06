@@ -27,8 +27,6 @@ private:
   Board *board_ = nullptr;
 
   void SetProportion(int sideSize);
-  void DrawAliveCell(int row, int column);
-  void DrawDeadCell(int row, int column);
   void DrawCell(int row, int column);
 };
 
