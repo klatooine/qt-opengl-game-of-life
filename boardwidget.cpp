@@ -3,6 +3,10 @@
 BoardWidget::BoardWidget(QWidget * parent) : QOpenGLWidget (parent) {
 }
 
+BoardWidget::~BoardWidget() {
+  delete board_;
+}
+
 void BoardWidget::SetBoard(Board * board) {
   board_ = board;
 
@@ -45,6 +49,8 @@ void BoardWidget::paintGL() {
       }
     }
   }
+
+  f->glFinish();
 }
 
 void BoardWidget::DrawCell(int row, int column) {

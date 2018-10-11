@@ -4,6 +4,9 @@ Cell::Cell() {
   state_ = false;
 }
 
+Cell::~Cell() {
+}
+
 void Cell::GiveLive() {
   state_ = true;
 }

@@ -19,15 +19,15 @@ void GameOfLife::on_setSize_btn_clicked() {
 }
 
 void GameOfLife::on_singleGliderReset_btn_clicked() {
-  board_->InitializeSingleGlider();
+  board_->DrawSingleGlider();
 }
 
 void GameOfLife::on_multipleGlidersReset_btn_clicked() {
-  board_->InitializeMultipleGliders();
+  board_->DrawMultipleGliders();
 }
 
 void GameOfLife::on_randomReset_btn_clicked()
 {
-  board_->InitializeRandom();
+  board_->DrawRandom();
 
 }

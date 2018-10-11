@@ -5,6 +5,7 @@
 class Cell {
 public:
   Cell();
+  ~Cell();
 
   void GiveLive();
   void Kill();

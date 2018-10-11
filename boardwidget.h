@@ -10,6 +10,8 @@ class BoardWidget : public QOpenGLWidget {
 
 public:
   BoardWidget(QWidget *parent = nullptr);
+  ~BoardWidget();
+
   void SetBoard(Board * board);
 
 protected:

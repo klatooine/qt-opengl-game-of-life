@@ -9,8 +9,16 @@ Board::Board(int sideSize) {
   timer_->start(60);
 }
 
+Board::~Board() {
+  FlushBoard();
+
+  delete timer_;
+}
+
 void Board::initialize() {
-  InitializeSingleGlider();
+  FlushBoard();
+  AllocateBoard();
+  DrawSingleGlider();
 }
 
 int Board::GetSideSize() {
@@ -34,19 +42,17 @@ void Board::SetNextTickBoard() {
     for (int columnIndex = 0; columnIndex < sideSize_; columnIndex++) {
       neighbors = NeighborsNumber(rowIndex, columnIndex);
 
-      Cell * cell = new Cell();
-
-      if(IsCellAlive(rowIndex, columnIndex) && neighbors == 2 || neighbors == 3) {
-        cell->GiveLive();
-
-        nextBoard[rowIndex][columnIndex] = *cell;
+      if((IsCellAlive(rowIndex, columnIndex) && neighbors == 2) || neighbors == 3) {
+        nextBoard[rowIndex][columnIndex].GiveLive();
       }
     }
   }
 
-  delete [] board_;
+  FlushBoard();
 
   board_ = nextBoard;
+
+  nextBoard = nullptr;
 
   emit Changed();
 }
@@ -114,18 +120,18 @@ int Board::NeighborsNumberInRow(int testRow, int row, int column) {
 }
 
 void Board::SetSize(int size) {
+  FlushBoard();
+
   sideSize_ = size;
 
-  initialize();
+  AllocateBoard();
+
+  DrawSingleGlider();
 
   emit SizeChanged();
 }
 
-void Board::ResetBoard() {
-  if (board_) {
-    delete [] board_;
-  }
-
+void Board::AllocateBoard() {
   board_ = new Cell*[static_cast<unsigned int>(sideSize_)];
 
   for (int rowIndex = 0; rowIndex < sideSize_; ++rowIndex) {
@@ -133,15 +139,11 @@ void Board::ResetBoard() {
   }
 }
 
-void Board::InitializeSingleGlider() {
-  ResetBoard();
-
+void Board::DrawSingleGlider() {
   DrawGlider(0, 0);
 }
 
-void Board::InitializeMultipleGliders() {
-  ResetBoard();
-
+void Board::DrawMultipleGliders() {
   for (int rowIndex = 3; rowIndex < sideSize_ - 3; rowIndex += 8) {
     for (int columnIndex = 3; columnIndex < sideSize_ - 3; columnIndex += 8) {
       if(rand() % 5) {
@@ -155,9 +157,7 @@ void Board::InitializeMultipleGliders() {
   }
 }
 
-void Board::InitializeRandom() {
-  ResetBoard();
-
+void Board::DrawRandom() {
   for (int rowIndex = 0; rowIndex < sideSize_; ++rowIndex) {
     for (int columnIndex = 0; columnIndex < sideSize_; ++columnIndex) {
       if(rand() % 3) {
@@ -184,5 +184,17 @@ void Board::DrawInverseGlider(int x, int y) {
     board_[x+2][y].GiveLive();
     board_[x+2][y+1].GiveLive();
     board_[x+2][y+2].GiveLive();
+  }
+}
+
+void Board::FlushBoard() {
+  if (board_) {
+    for(int i = 0; i < sideSize_; i++) {
+      delete [] board_[i];
+    }
+
+    delete [] board_;
+
+    board_ = nullptr;
   }
 }
